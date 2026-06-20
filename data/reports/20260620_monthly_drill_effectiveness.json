@@ -1,0 +1,83 @@
+{
+  "report_type": "drill_effectiveness",
+  "period": "monthly",
+  "start_time": "2026-06-01T00:00:00",
+  "end_time": "2026-06-20T08:22:35.175748",
+  "generated_at": "2026-06-20T08:22:35.175888",
+  "drill_type_summary": [
+    {
+      "drill_type": "rollback",
+      "count": 3,
+      "passed": 0,
+      "failed": 3,
+      "pass_rate": "0.0%",
+      "avg_duration_minutes": "0.2min"
+    }
+  ],
+  "total_issues_found": 5,
+  "total_improvements_identified": 5,
+  "top_issues": [
+    {
+      "step": "验证熔断机制触发",
+      "severity": "low",
+      "description": "验证熔断机制触发环节模拟故障",
+      "root_cause": "告警通知渠道偶发失败"
+    },
+    {
+      "step": "验证业务指标恢复",
+      "severity": "high",
+      "description": "验证业务指标恢复环节模拟故障",
+      "root_cause": "状态机流转分支覆盖不全"
+    },
+    {
+      "step": "演练环境初始化",
+      "severity": "high",
+      "description": "演练环境初始化环节模拟故障",
+      "root_cause": "告警通知渠道偶发失败"
+    },
+    {
+      "step": "验证熔断机制触发",
+      "severity": "low",
+      "description": "验证熔断机制触发环节模拟故障",
+      "root_cause": "外部依赖接口响应超时"
+    },
+    {
+      "step": "演练环境清理",
+      "severity": "high",
+      "description": "演练环境清理环节模拟故障",
+      "root_cause": "外部依赖接口响应超时"
+    }
+  ],
+  "top_improvements": [
+    {
+      "related_issue": "验证熔断机制触发",
+      "action": "优化验证熔断机制触发环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "medium"
+    },
+    {
+      "related_issue": "验证业务指标恢复",
+      "action": "优化验证业务指标恢复环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "high"
+    },
+    {
+      "related_issue": "演练环境初始化",
+      "action": "优化演练环境初始化环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "high"
+    },
+    {
+      "related_issue": "验证熔断机制触发",
+      "action": "优化验证熔断机制触发环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "medium"
+    },
+    {
+      "related_issue": "演练环境清理",
+      "action": "优化演练环境清理环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "high"
+    }
+  ]
+}

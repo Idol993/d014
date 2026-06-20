@@ -1,0 +1,109 @@
+{
+  "report_type": "release_quality",
+  "period": "monthly",
+  "start_time": "2026-06-01T00:00:00",
+  "end_time": "2026-06-20T08:22:35.173511",
+  "generated_at": "2026-06-20T08:22:35.173764",
+  "summary": {
+    "total_releases": 9,
+    "completed": 3,
+    "rolled_back": 3,
+    "rejected": 0,
+    "in_progress": 3,
+    "success_rate": "33.33%",
+    "rollback_rate": "33.33%",
+    "average_precheck_score": "94.09"
+  },
+  "by_release_type": {
+    "normal": 6,
+    "hotfix": 3
+  },
+  "by_state": {
+    "ROLLED_BACK": 3,
+    "READY_FOR_DEPLOY": 3,
+    "COMPLETED": 3
+  },
+  "releases": [
+    {
+      "id": "REL-20260620-082158-145",
+      "version": "2.5.0-rc1",
+      "release_type": "normal",
+      "state": "ROLLED_BACK",
+      "applicant": "tester",
+      "pre_check_score": 86.45,
+      "created_at": "2026-06-20T08:21:58.293394"
+    },
+    {
+      "id": "REL-20260620-082158-688",
+      "version": "2.4.0-hotfix1",
+      "release_type": "hotfix",
+      "state": "READY_FOR_DEPLOY",
+      "applicant": "oncall",
+      "pre_check_score": 97.5,
+      "created_at": "2026-06-20T08:21:58.226499"
+    },
+    {
+      "id": "REL-20260620-082158-608",
+      "version": "2.4.0",
+      "release_type": "normal",
+      "state": "COMPLETED",
+      "applicant": "wang_dev",
+      "pre_check_score": 97.5,
+      "created_at": "2026-06-20T08:21:58.166650"
+    },
+    {
+      "id": "REL-20260620-082117-162",
+      "version": "2.5.0-rc1",
+      "release_type": "normal",
+      "state": "ROLLED_BACK",
+      "applicant": "tester",
+      "pre_check_score": 89.84,
+      "created_at": "2026-06-20T08:21:17.989381"
+    },
+    {
+      "id": "REL-20260620-082117-927",
+      "version": "2.4.0-hotfix1",
+      "release_type": "hotfix",
+      "state": "READY_FOR_DEPLOY",
+      "applicant": "oncall",
+      "pre_check_score": 97.5,
+      "created_at": "2026-06-20T08:21:17.928205"
+    },
+    {
+      "id": "REL-20260620-082117-052",
+      "version": "2.4.0",
+      "release_type": "normal",
+      "state": "COMPLETED",
+      "applicant": "wang_dev",
+      "pre_check_score": 96.32,
+      "created_at": "2026-06-20T08:21:17.866489"
+    },
+    {
+      "id": "REL-20260620-082057-314",
+      "version": "2.5.0-rc1",
+      "release_type": "normal",
+      "state": "ROLLED_BACK",
+      "applicant": "tester",
+      "pre_check_score": 97.5,
+      "created_at": "2026-06-20T08:20:57.338915"
+    },
+    {
+      "id": "REL-20260620-082057-863",
+      "version": "2.4.0-hotfix1",
+      "release_type": "hotfix",
+      "state": "READY_FOR_DEPLOY",
+      "applicant": "oncall",
+      "pre_check_score": 94.5,
+      "created_at": "2026-06-20T08:20:57.280958"
+    },
+    {
+      "id": "REL-20260620-082057-156",
+      "version": "2.4.0",
+      "release_type": "normal",
+      "state": "COMPLETED",
+      "applicant": "wang_dev",
+      "pre_check_score": 89.73,
+      "created_at": "2026-06-20T08:20:57.223152"
+    }
+  ]
+}

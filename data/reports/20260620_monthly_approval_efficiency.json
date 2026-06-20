@@ -1,0 +1,57 @@
+{
+  "report_type": "approval_efficiency",
+  "period": "monthly",
+  "start_time": "2026-06-01T00:00:00",
+  "end_time": "2026-06-20T08:22:35.174155",
+  "generated_at": "2026-06-20T08:22:35.174625",
+  "stage_summary": [
+    {
+      "stage": "调度审批",
+      "total": 6,
+      "approved": 6,
+      "rejected": 0,
+      "approval_rate": "100.0%",
+      "avg_approval_hours": "0.0h"
+    },
+    {
+      "stage": "运营审批",
+      "total": 6,
+      "approved": 6,
+      "rejected": 0,
+      "approval_rate": "100.0%",
+      "avg_approval_hours": "0.0h"
+    },
+    {
+      "stage": "安全审批",
+      "total": 6,
+      "approved": 6,
+      "rejected": 0,
+      "approval_rate": "100.0%",
+      "avg_approval_hours": "0.0h"
+    },
+    {
+      "stage": "技术审批",
+      "total": 6,
+      "approved": 6,
+      "rejected": 0,
+      "approval_rate": "100.0%",
+      "avg_approval_hours": "0.0h"
+    },
+    {
+      "stage": "并行审批",
+      "total": 12,
+      "approved": 3,
+      "rejected": 0,
+      "approval_rate": "25.0%",
+      "avg_approval_hours": "0.0h"
+    },
+    {
+      "stage": "事后补签",
+      "total": 12,
+      "approved": 0,
+      "rejected": 0,
+      "approval_rate": "0.0%",
+      "avg_approval_hours": "0h"
+    }
+  ]
+}

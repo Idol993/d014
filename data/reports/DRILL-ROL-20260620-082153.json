@@ -1,0 +1,110 @@
+{
+  "drill_id": "DRILL-ROL-20260620-082153",
+  "drill_type": "rollback",
+  "drill_name": "自动化测试演练",
+  "generated_at": "2026-06-20T08:21:54.887653",
+  "summary": {
+    "drill_id": "DRILL-ROL-20260620-082153",
+    "drill_type": "rollback",
+    "drill_name": "自动化测试演练",
+    "total_steps": 8,
+    "passed_steps": 6,
+    "failed_steps": 2,
+    "total_duration_seconds": 10.01,
+    "status": "FAILED",
+    "steps": [
+      {
+        "step_key": "env_init",
+        "step_name": "演练环境初始化",
+        "passed": false,
+        "duration_seconds": 1.07,
+        "timeout_seconds": 5,
+        "message": "告警通知渠道偶发失败"
+      },
+      {
+        "step_key": "deploy_new",
+        "step_name": "部署模拟新版本",
+        "passed": true,
+        "duration_seconds": 1.36,
+        "timeout_seconds": 5,
+        "message": "执行通过"
+      },
+      {
+        "step_key": "traffic_gray",
+        "step_name": "切量至灰度版本",
+        "passed": true,
+        "duration_seconds": 0.81,
+        "timeout_seconds": 3,
+        "message": "执行通过"
+      },
+      {
+        "step_key": "inject_fault",
+        "step_name": "注入故障触发告警",
+        "passed": true,
+        "duration_seconds": 1.02,
+        "timeout_seconds": 3,
+        "message": "执行通过"
+      },
+      {
+        "step_key": "verify_circuit",
+        "step_name": "验证熔断机制触发",
+        "passed": false,
+        "duration_seconds": 1.63,
+        "timeout_seconds": 5,
+        "message": "外部依赖接口响应超时"
+      },
+      {
+        "step_key": "verify_rollback",
+        "step_name": "验证自动回滚执行",
+        "passed": true,
+        "duration_seconds": 2.64,
+        "timeout_seconds": 10,
+        "message": "执行通过"
+      },
+      {
+        "step_key": "verify_restore",
+        "step_name": "验证业务指标恢复",
+        "passed": true,
+        "duration_seconds": 0.8,
+        "timeout_seconds": 3,
+        "message": "执行通过"
+      },
+      {
+        "step_key": "cleanup",
+        "step_name": "演练环境清理",
+        "passed": true,
+        "duration_seconds": 0.68,
+        "timeout_seconds": 2,
+        "message": "执行通过"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "step": "演练环境初始化",
+      "severity": "high",
+      "description": "演练环境初始化环节模拟故障",
+      "root_cause": "告警通知渠道偶发失败"
+    },
+    {
+      "step": "验证熔断机制触发",
+      "severity": "low",
+      "description": "验证熔断机制触发环节模拟故障",
+      "root_cause": "外部依赖接口响应超时"
+    }
+  ],
+  "improvements": [
+    {
+      "related_issue": "演练环境初始化",
+      "action": "优化演练环境初始化环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "high"
+    },
+    {
+      "related_issue": "验证熔断机制触发",
+      "action": "优化验证熔断机制触发环节的容错与重试机制",
+      "owner": "技术团队",
+      "priority": "medium"
+    }
+  ]
+}

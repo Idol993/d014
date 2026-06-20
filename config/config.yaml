@@ -1,0 +1,91 @@
+system:
+  name: "干线运输调度系统版本发布平台"
+  version: "1.0.0"
+  timezone: "Asia/Shanghai"
+  log_level: "INFO"
+  log_dir: "./logs"
+  data_dir: "./data"
+  report_dir: "./data/reports"
+
+deployment:
+  platform: "jenkins"
+  base_url: "http://jenkins.example.com"
+  api_token: "${JENKINS_API_TOKEN}"
+  deploy_job: "tms-deploy"
+  rollback_job: "tms-rollback"
+  health_check_url: "http://tms.example.com/health"
+  health_check_timeout: 30
+  health_check_retries: 3
+
+external_systems:
+  prometheus:
+    base_url: "http://prometheus.example.com:9090"
+    api_path: "/api/v1/query"
+    timeout: 10
+
+  wms:
+    base_url: "http://wms.example.com/api"
+    health_endpoint: "/health"
+    timeout: 5
+
+  tms:
+    base_url: "http://tms.example.com/api"
+    health_endpoint: "/health"
+    timeout: 5
+
+gray_release:
+  enabled: true
+  strategy: "route_based"
+  collect_interval_seconds: 300
+  consecutive_window_threshold: 3
+
+  route_phases:
+    - name: "feeder_routes"
+      display_name: "支线线路"
+      coverage: ["支线-华东", "支线-华南", "支线-华北"]
+      duration_minutes: 30
+      traffic_percent: 10
+      auto_advance: true
+      require_manual_confirm: false
+
+    - name: "regional_trunk"
+      display_name: "区域干线"
+      coverage: ["干线-华东区域", "干线-华南区域", "干线-华北区域"]
+      duration_minutes: 60
+      traffic_percent: 30
+      auto_advance: true
+      require_manual_confirm: false
+
+    - name: "national_trunk"
+      display_name: "全国干线"
+      coverage: ["干线-华北-华东", "干线-华东-华南", "干线-华南-西南", "干线-华北-西南"]
+      duration_minutes: 120
+      traffic_percent: 60
+      auto_advance: false
+      require_manual_confirm: true
+
+    - name: "full_release"
+      display_name: "全量发布"
+      coverage: ["ALL"]
+      duration_minutes: 0
+      traffic_percent: 100
+      auto_advance: false
+      require_manual_confirm: true
+
+rollback:
+  auto_rollback_enabled: true
+  max_rollback_wait_seconds: 300
+  rollback_verify_retries: 3
+  rollback_verify_interval_seconds: 20
+
+drill:
+  enabled: true
+  auto_report: true
+  default_timeout_minutes: 60
+
+reporting:
+  daily_report_time: "09:00"
+  weekly_report_day: 1
+  weekly_report_time: "10:00"
+  monthly_report_day: 1
+  monthly_report_time: "10:00"

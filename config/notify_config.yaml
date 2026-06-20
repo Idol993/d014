@@ -1,0 +1,169 @@
+notify_channels:
+  wework:
+    enabled: true
+    webhook_url: "${WEWORK_WEBHOOK_URL}"
+    mentioned_mobile_list: []
+    retry_count: 3
+    retry_interval_seconds: 5
+
+  dingtalk:
+    enabled: true
+    webhook_url: "${DINGTALK_WEBHOOK_URL}"
+    secret: "${DINGTALK_SECRET}"
+    at_mobiles: []
+    retry_count: 3
+    retry_interval_seconds: 5
+
+  email:
+    enabled: true
+    smtp_host: "smtp.company.com"
+    smtp_port: 465
+    smtp_use_ssl: true
+    smtp_username: "${SMTP_USERNAME}"
+    smtp_password: "${SMTP_PASSWORD}"
+    sender: "release-platform@company.com"
+    retry_count: 3
+    retry_interval_seconds: 10
+
+templates:
+  approval_pending:
+    title: "【发布审批待处理】"
+    wework_markdown: |
+      ## 【发布审批待处理】
+      > **发布单号**：{release_id}
+      > **发布类型**：{release_type}
+      > **版本号**：{version}
+      > **发布摘要**：{summary}
+      > **申请人**：{applicant}
+      > **当前审批节点**：{stage}
+      > **审批角色**：{role}
+      > ⏰ 请在 **{timeout}** 内完成审批
+      >
+      > [点击审批]({approval_url})
+
+    dingtalk_markdown: |
+      ### 【发布审批待处理】
+      - **发布单号**：{release_id}
+      - **发布类型**：{release_type}
+      - **版本号**：{version}
+      - **发布摘要**：{summary}
+      - **申请人**：{applicant}
+      - **当前审批节点**：{stage}
+      - **审批角色**：{role}
+      - ⏰ 请在 **{timeout}** 内完成审批
+      - [点击审批]({approval_url})
+
+    email_subject: "【发布审批待处理】{release_id} - {summary}"
+    email_body: |
+      <h2>发布审批待处理</h2>
+      <table border="1" cellpadding="8">
+        <tr><td><b>发布单号</b></td><td>{release_id}</td></tr>
+        <tr><td><b>发布类型</b></td><td>{release_type}</td></tr>
+        <tr><td><b>版本号</b></td><td>{version}</td></tr>
+        <tr><td><b>发布摘要</b></td><td>{summary}</td></tr>
+        <tr><td><b>申请人</b></td><td>{applicant}</td></tr>
+        <tr><td><b>当前审批节点</b></td><td>{stage}</td></tr>
+        <tr><td><b>审批角色</b></td><td>{role}</td></tr>
+        <tr><td><b>截止时间</b></td><td>{deadline}</td></tr>
+      </table>
+      <p><a href="{approval_url}">点击此处进入审批页面</a></p>
+
+  circuit_breaker:
+    title: "⚠️【发布熔断告警 - 自动回滚已触发】"
+    wework_markdown: |
+      ## ⚠️ 【发布熔断告警 - 自动回滚已触发】
+      > **发布单号**：{release_id}
+      > **回滚单号**：{rollback_id}
+      > **触发时间**：{trigger_time}
+      > **触发原因**：{metric} = **{current_value}**（阈值 = {threshold}）
+      > **连续超限窗口**：{consecutive_windows} 个
+      >
+      > **影响范围**：
+      > - 影响线路：{routes}
+      > - 流量占比：{traffic}%
+      > - 预估影响单量：{impact_orders} 单
+      >
+      > **回滚状态**：{rollback_status}
+      > **回滚耗时**：{duration} 秒
+      >
+      > **已通知**：{parties}
+      >
+      > [查看回滚详情]({report_url})
+
+    dingtalk_markdown: |
+      ### ⚠️ 【发布熔断告警 - 自动回滚已触发】
+      - **发布单号**：{release_id}
+      - **回滚单号**：{rollback_id}
+      - **触发时间**：{trigger_time}
+      - **触发原因**：{metric} = **{current_value}**（阈值 = {threshold}）
+      - **连续超限窗口**：{consecutive_windows} 个
+      - **影响线路**：{routes}
+      - **流量占比**：{traffic}%
+      - **预估影响单量**：{impact_orders} 单
+      - **回滚状态**：{rollback_status}
+      - **回滚耗时**：{duration} 秒
+      - [查看回滚详情]({report_url})
+
+    email_subject: "⚠️【发布熔断告警】{release_id} 自动回滚已触发"
+    email_body: |
+      <h2 style="color:#d00;">⚠️ 发布熔断告警 - 自动回滚已触发</h2>
+      <table border="1" cellpadding="8">
+        <tr><td><b>发布单号</b></td><td>{release_id}</td></tr>
+        <tr><td><b>回滚单号</b></td><td>{rollback_id}</td></tr>
+        <tr><td><b>触发时间</b></td><td>{trigger_time}</td></tr>
+        <tr><td><b>触发指标</b></td><td>{metric}</td></tr>
+        <tr><td><b>当前值</b></td><td style="color:#d00;"><b>{current_value}</b></td></tr>
+        <tr><td><b>阈值</b></td><td>{threshold}</td></tr>
+        <tr><td><b>连续超限窗口</b></td><td>{consecutive_windows} 个</td></tr>
+        <tr bgcolor="#fff0f0;"><td><b>影响线路</b></td><td>{routes}</td></tr>
+        <tr bgcolor="#fff0f0;"><td><b>流量占比</b></td><td>{traffic}%</td></tr>
+        <tr bgcolor="#fff0f0;"><td><b>预估影响单量</b></td><td>{impact_orders} 单</td></tr>
+        <tr><td><b>回滚状态</b></td><td>{rollback_status}</td></tr>
+        <tr><td><b>回滚耗时</b></td><td>{duration} 秒</td></tr>
+      </table>
+      <p><a href="{report_url}">点击查看完整回滚报告</a></p>
+
+  pre_check_result:
+    title: "【发布前置校验结果】"
+    wework_markdown: |
+      ## 【发布前置校验结果】
+      > **发布单号**：{release_id}
+      > **版本号**：{version}
+      > **校验结果**：{result}
+      > **综合得分**：{score} 分
+      >
+      > **指标明细**：
+      > {metrics_detail}
+      >
+      > {fix_suggestions_section}
+
+  rollback_completed:
+    title: "【回滚执行完成】"
+    wework_markdown: |
+      ## 【回滚执行完成】
+      > **发布单号**：{release_id}
+      > **回滚单号**：{rollback_id}
+      > **回滚完成时间**：{complete_time}
+      > **总耗时**：{duration} 秒
+      > **回滚前版本**：{from_version}
+      > **回滚后版本**：{to_version}
+      >
+      > **执行步骤**：
+      > {actions_detail}
+      >
+      > **健康验证**：{health_status}
+
+  drill_completed:
+    title: "【演练执行完成】"
+    wework_markdown: |
+      ## 【演练执行完成】
+      > **演练ID**：{drill_id}
+      > **演练类型**：{drill_type}
+      > **演练结果**：{result}
+      > **执行时长**：{duration} 分钟
+      >
+      > **问题清单**：
+      > {issues_detail}
+      >
+      > **改进项**：
+      > {improvements_detail}

@@ -1,0 +1,120 @@
+release_channels:
+  normal:
+    name: "常规迭代"
+    description: "按计划版本发布、非紧急缺陷修复"
+    approval_mode: "serial"
+    timeout_hours: 24
+    stages:
+      - order: 1
+        key: "dispatch"
+        name: "调度审批"
+        description: "运力与时效评估"
+        role: "调度主管"
+        escalation_role: "调度部门经理"
+        timeout_hours: 8
+        dimensions:
+          - "运力保障是否充分"
+          - "调度时效是否受影响"
+          - "线路资源是否就绪"
+
+      - order: 2
+        key: "operation"
+        name: "运营审批"
+        description: "业务影响评估"
+        role: "运营总监"
+        escalation_role: "分管VP"
+        timeout_hours: 8
+        dimensions:
+          - "对KPI的影响评估"
+          - "客户影响评估"
+          - "收入影响评估"
+          - "操作复杂度评估"
+
+      - order: 3
+        key: "security"
+        name: "安全审批"
+        description: "合规与风控评估"
+        role: "安全合规经理"
+        escalation_role: "安全负责人"
+        timeout_hours: 4
+        dimensions:
+          - "数据安全评估"
+          - "合规要求检查"
+          - "风控规则评估"
+          - "应急预案审查"
+
+      - order: 4
+        key: "tech"
+        name: "技术审批"
+        description: "架构与代码评估"
+        role: "技术架构师"
+        escalation_role: "技术总监"
+        timeout_hours: 4
+        dimensions:
+          - "架构合理性评估"
+          - "代码质量审查"
+          - "回滚方案审查"
+          - "技术债务评估"
+
+  hotfix:
+    name: "紧急热修复"
+    description: "线上P0/P1故障、监管要求、重大业务影响"
+    approval_mode: "parallel"
+    timeout_hours: 2
+    require_reason: true
+    retroactive_signoff_hours: 48
+    stages:
+      - order: 1
+        key: "all_parallel"
+        name: "并行审批"
+        description: "所有干系人并行审批，任一人通过即可发布"
+        roles:
+          - "调度主管"
+          - "运营总监"
+          - "安全合规经理"
+          - "技术架构师"
+        approval_rule: "any"
+        timeout_hours: 2
+
+      - order: 2
+        key: "retroactive"
+        name: "事后补签"
+        description: "发布后48小时内完成所有审批补签"
+        roles:
+          - "调度主管"
+          - "运营总监"
+          - "安全合规经理"
+          - "技术架构师"
+        approval_rule: "all"
+        timeout_hours: 48
+        is_retroactive: true
+
+default_approvers:
+  调度主管: ["dispatcher_lead@company.com"]
+  调度部门经理: ["dispatch_manager@company.com"]
+  运营总监: ["operation_director@company.com"]
+  分管VP: ["vp_operation@company.com"]
+  安全合规经理: ["security_manager@company.com"]
+  安全负责人: ["security_head@company.com"]
+  技术架构师: ["tech_architect@company.com"]
+  技术总监: ["tech_director@company.com"]
+
+notification_parties:
+  rollback:
+    - "调度主管"
+    - "运营总监"
+    - "安全合规经理"
+    - "技术架构师"
+    - "技术总监"
+
+  circuit_breaker:
+    - "调度主管"
+    - "运营总监"
+    - "安全合规经理"
+    - "技术架构师"
+    - "技术总监"
+    - "运维值班"
+
+  release_completed:
+    - "申请人"
+    - "所有审批人"

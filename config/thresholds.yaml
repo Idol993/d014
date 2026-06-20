@@ -1,0 +1,122 @@
+pre_check:
+  dispatch_success_rate:
+    name: "车辆调度成功率"
+    category: "core"
+    weight: 30
+    threshold: 98.5
+    operator: ">="
+    unit: "%"
+    data_source: "regression_test"
+    description: "调度成功次数 / 总调度次数 × 100%"
+    block_on_fail: true
+    fix_suggestions:
+      - "检查调度算法变更，对比新旧算法在测试集上的差异"
+      - "验证场站资源数据是否同步完整"
+      - "回归测试是否覆盖高峰时段场景"
+
+  monitor_connectivity_rate:
+    name: "在途监控连通率"
+    category: "core"
+    weight: 25
+    threshold: 99.0
+    operator: ">="
+    unit: "%"
+    data_source: "monitor_api"
+    description: "在线车辆数 / 应在线车辆数 × 100%"
+    block_on_fail: true
+    fix_suggestions:
+      - "检查GPS设备通信模块接口兼容性"
+      - "验证消息队列（MQ）消费端是否正常"
+      - "确认车辆终端固件版本与后端适配"
+
+  fuel_consumption_deviation_rate:
+    name: "油耗算法偏差率"
+    category: "core"
+    weight: 25
+    threshold: 3.0
+    operator: "<="
+    unit: "%"
+    data_source: "test_dataset"
+    description: "|计算值-实测值| / 实测值 × 100% 的均值"
+    block_on_fail: true
+    fix_suggestions:
+      - "核对油耗算法参数配置（车辆型号、载重系数、路况因子）"
+      - "检查测试数据集是否包含异常值（需清洗）"
+      - "对比算法回归前后的特征工程差异"
+
+  wms_availability:
+    name: "WMS接口可用性"
+    category: "dependency"
+    weight: 10
+    threshold: 99.5
+    operator: ">="
+    unit: "%"
+    data_source: "health_check"
+    description: "健康检查成功率（5分钟窗口）"
+    block_on_fail: false
+    hard_block_threshold: 95.0
+    fix_suggestions:
+      - "联系WMS运维团队确认接口状态"
+      - "检查网络连通性与防火墙策略"
+      - "验证WMS鉴权Token是否有效"
+
+  tms_availability:
+    name: "TMS接口可用性"
+    category: "dependency"
+    weight: 10
+    threshold: 99.5
+    operator: ">="
+    unit: "%"
+    data_source: "health_check"
+    description: "健康检查成功率（5分钟窗口）"
+    block_on_fail: false
+    hard_block_threshold: 95.0
+    fix_suggestions:
+      - "联系TMS运维团队确认接口状态"
+      - "检查网络连通性与防火墙策略"
+      - "验证TMS鉴权Token是否有效"
+
+  overall_score:
+    pass_threshold: 90
+    risk_warning_threshold: 95
+
+runtime_metrics:
+  offline_rate:
+    name: "在途离线率"
+    safe_threshold: 2.0
+    circuit_breaker_threshold: 5.0
+    unit: "%"
+    description: "离线车辆数 / 应在线车辆数 × 100%"
+    promql: '100 - (avg(rate(vehicle_online_total[5m])) * 100)'
+
+  dispatch_failure_rate:
+    name: "调度失败率"
+    safe_threshold: 1.5
+    circuit_breaker_threshold: 3.0
+    unit: "%"
+    description: "调度失败次数 / 总调度次数 × 100%"
+    promql: 'sum(rate(dispatch_failed_total[5m])) / sum(rate(dispatch_total[5m])) * 100'
+
+  freight_calc_error_rate:
+    name: "运费计算异常率"
+    safe_threshold: 1.0
+    circuit_breaker_threshold: 2.0
+    unit: "%"
+    description: "运费异常单量 / 总运单量 × 100%"
+    promql: 'sum(rate(freight_calc_error_total[5m])) / sum(rate(freight_calc_total[5m])) * 100'
+
+  api_error_rate:
+    name: "API错误率"
+    safe_threshold: 0.5
+    circuit_breaker_threshold: 1.0
+    unit: "%"
+    description: "5xx错误数 / 总请求数 × 100%"
+    promql: 'sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) * 100'
+
+  api_p99_latency:
+    name: "P99响应耗时"
+    safe_threshold: 500
+    circuit_breaker_threshold: 1000
+    unit: "ms"
+    description: "接口响应时间P99分位"
+    promql: 'histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) * 1000'
