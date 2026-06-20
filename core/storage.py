@@ -181,8 +181,8 @@ class Storage:
             conn.execute(
                 """INSERT INTO releases (
                     id, version, release_type, summary, applicant, state,
-                    hotfix_reason, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    hotfix_reason, from_version, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     release_data["id"],
                     release_data["version"],
@@ -191,6 +191,7 @@ class Storage:
                     release_data["applicant"],
                     release_data["state"],
                     release_data.get("hotfix_reason", ""),
+                    release_data.get("from_version", ""),
                     now,
                     now,
                 ),

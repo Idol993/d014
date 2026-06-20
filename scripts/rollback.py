@@ -50,6 +50,17 @@ class CircuitBreakerEngine:
         )
         return breached, status
 
+    def _count_consecutive_breaches(
+        self, recent_windows: List[Dict[str, Any]]
+    ) -> int:
+        consecutive = 0
+        for w in recent_windows:
+            if w["is_breach"]:
+                consecutive += 1
+            else:
+                break
+        return consecutive
+
     def monitor_once(self, release_id: str) -> Dict[str, Any]:
         release = storage.get_release(release_id)
         if not release:
@@ -88,9 +99,7 @@ class CircuitBreakerEngine:
             recent_windows = storage.get_recent_metric_windows(
                 release_id, metric_data["name"], self.consecutive_window_threshold + 2
             )
-            consecutive_breaches = sum(
-                1 for w in recent_windows if w["is_breach"]
-            )
+            consecutive_breaches = self._count_consecutive_breaches(recent_windows)
 
             log_msg = (
                 f"[{release_id}] {metric_data['name']}: {status_text}"
@@ -204,7 +213,7 @@ class RollbackEngine:
             "consecutive_windows": trigger["consecutive_windows"],
             "trigger_time": trigger_time.isoformat(),
             "from_version": release["version"],
-            "to_version": release.get("from_version") or "previous_stable",
+            "to_version": release.get("from_version") or f"v{release['version']}-前一稳定版(未指定)",
             "status": RollbackStatus.TRIGGERED,
             "impact_scope": {
                 "phase": release.get("current_phase"),
@@ -351,7 +360,7 @@ class RollbackEngine:
                     auth=HTTPBasicAuth("api", token),
                     params={
                         "RELEASE_ID": release["id"],
-                        "TARGET_VERSION": release.get("from_version", "previous_stable"),
+                        "TARGET_VERSION": release.get("from_version") or "",
                     },
                     timeout=300,
                 )
@@ -437,10 +446,13 @@ class RollbackEngine:
         duration: int,
         status: str,
     ) -> str:
+        from_version = release.get("from_version") or f"v{release['version']}-前一稳定版(未指定)"
         report = {
             "rollback_id": rollback_id,
             "release_id": release["id"],
             "version": release["version"],
+            "rollback_from_version": release["version"],
+            "rollback_to_version": from_version,
             "trigger_time": trigger_time.isoformat(),
             "rollback_complete_time": complete_time.isoformat(),
             "duration_seconds": duration,

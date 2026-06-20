@@ -68,6 +68,7 @@ def show_release(release_id: str):
     print(f"  发布类型: {'常规迭代' if release['release_type'] == 'normal' else '紧急热修复'}")
     print(f"  当前状态: {release['state']}")
     print(f"  申请人:   {release['applicant']}")
+    print(f"  上一版本: {release.get('from_version') or '-'}")
     print(f"  灰度阶段: {release.get('current_phase') or '-'} ({release.get('gray_traffic_percent', 0)}%)")
     print(f"  校验得分: {release.get('pre_check_score') or '-'}")
     if release.get("summary"):

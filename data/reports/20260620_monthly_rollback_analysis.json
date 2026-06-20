@@ -2,44 +2,26 @@
   "report_type": "rollback_analysis",
   "period": "monthly",
   "start_time": "2026-06-01T00:00:00",
-  "end_time": "2026-06-20T08:22:35.175023",
-  "generated_at": "2026-06-20T08:22:35.175418",
+  "end_time": "2026-06-20T09:04:20.872848",
+  "generated_at": "2026-06-20T09:04:20.873151",
   "summary": {
-    "total_rollbacks": 3,
+    "total_rollbacks": 1,
     "avg_duration_seconds": 35,
     "avg_affected_traffic_percent": 30.0,
-    "total_estimated_impact_orders": 75
+    "total_estimated_impact_orders": 25
   },
   "trigger_reason_distribution": {
-    "调度失败率": 3
+    "调度失败率": 1
   },
   "rollback_details": [
     {
-      "rollback_id": "RB-20260620-082158",
-      "release_id": "REL-20260620-082158-145",
+      "rollback_id": "RB-20260620-090344",
+      "release_id": "REL-20260620-090343-133",
       "trigger_metric": "调度失败率",
       "trigger_value": 3.42,
       "duration_seconds": 35,
       "status": "COMPLETED",
-      "trigger_time": "2026-06-20T08:21:58.342027"
-    },
-    {
-      "rollback_id": "RB-20260620-082118",
-      "release_id": "REL-20260620-082117-162",
-      "trigger_metric": "调度失败率",
-      "trigger_value": 3.42,
-      "duration_seconds": 35,
-      "status": "COMPLETED",
-      "trigger_time": "2026-06-20T08:21:18.051121"
-    },
-    {
-      "rollback_id": "RB-20260620-082057",
-      "release_id": "REL-20260620-082057-314",
-      "trigger_metric": "调度失败率",
-      "trigger_value": 3.42,
-      "duration_seconds": 35,
-      "status": "COMPLETED",
-      "trigger_time": "2026-06-20T08:20:57.385176"
+      "trigger_time": "2026-06-20T09:03:44.020431"
     }
   ]
 }

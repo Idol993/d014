@@ -1,9 +1,11 @@
 {
-  "rollback_id": "RB-20260620-082158",
-  "release_id": "REL-20260620-082158-145",
+  "rollback_id": "RB-20260620-090344",
+  "release_id": "REL-20260620-090343-133",
   "version": "2.5.0-rc1",
-  "trigger_time": "2026-06-20T08:21:58.342027",
-  "rollback_complete_time": "2026-06-20T08:22:33.349563",
+  "rollback_from_version": "2.5.0-rc1",
+  "rollback_to_version": "2.4.0",
+  "trigger_time": "2026-06-20T09:03:44.020431",
+  "rollback_complete_time": "2026-06-20T09:04:19.031110",
   "duration_seconds": 35,
   "status": "COMPLETED",
   "trigger_reason": {

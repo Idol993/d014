@@ -1,15 +1,14 @@
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from typing import Any, Dict, List, Optional, Tuple
 
 from core import logger
 from core.config_loader import config
 from core.storage import storage
 from core.state_machine import ReleaseState, StateMachine
 from core.notifier import notifier
+from scripts.pre_check import PreCheckResult
 
 
 class ApprovalStatus:
@@ -205,6 +204,40 @@ class ApprovalFlowEngine:
             release_id=release["id"],
         )
 
+    def _get_ordered_stage_keys(self, release_type: str) -> List[str]:
+        channel_cfg = self._get_channel_config(release_type)
+        stages = channel_cfg.get("stages", [])
+        result = []
+        for s in stages:
+            if s.get("is_retroactive"):
+                continue
+            result.append(s["key"])
+        return result
+
+    def _find_awaiting_stage(
+        self, release: Dict[str, Any], approvals: List[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
+        channel_cfg = self._get_channel_config(release["release_type"])
+        approval_mode = channel_cfg.get("approval_mode", "serial")
+        if approval_mode != "serial":
+            return None
+
+        for stage in channel_cfg.get("stages", []):
+            if stage.get("is_retroactive"):
+                continue
+            stage_key = stage["key"]
+            stage_approvals = [a for a in approvals if a["stage_key"] == stage_key]
+            if not stage_approvals:
+                continue
+            statuses = [a["status"] for a in stage_approvals]
+            if ApprovalStatus.REJECTED in statuses:
+                return {"stage_key": stage_key, "stage_name": stage.get("name", stage_key), "status": "rejected"}
+            if ApprovalStatus.PENDING in statuses:
+                return {"stage_key": stage_key, "stage_name": stage.get("name", stage_key), "status": "pending"}
+            if all(s in (ApprovalStatus.APPROVED, ApprovalStatus.SKIPPED) for s in statuses):
+                continue
+        return None
+
     def approve(
         self,
         release_id: str,
@@ -217,9 +250,43 @@ class ApprovalFlowEngine:
         if not release:
             return {"success": False, "error": "发布单不存在"}
 
+        passed, msg = self._check_pre_check_passed(release)
+        if not passed:
+            logger.error(f"审批操作被阻断: {msg}")
+            return {"success": False, "error": msg}
+
         approvals = storage.get_approvals(release_id)
+        if not approvals:
+            return {
+                "success": False,
+                "error": f"发布单 {release_id} 尚未初始化审批流程，请先执行审批初始化",
+            }
+
         channel_cfg = self._get_channel_config(release["release_type"])
         approval_mode = channel_cfg.get("approval_mode", "serial")
+
+        any_rejected = any(a["status"] == ApprovalStatus.REJECTED for a in approvals)
+        if any_rejected:
+            rejected_info = [
+                f"{a['stage_name']}({a['approver_role']})"
+                for a in approvals if a["status"] == ApprovalStatus.REJECTED
+            ]
+            return {
+                "success": False,
+                "error": f"发布单已存在驳回节点（{', '.join(rejected_info)}），后续审批不可继续",
+            }
+
+        if approval_mode == "serial":
+            awaiting = self._find_awaiting_stage(release, approvals)
+            if awaiting and awaiting["stage_key"] != stage_key:
+                return {
+                    "success": False,
+                    "error": (
+                        f"当前应先处理「{awaiting['stage_name']}」阶段的审批，"
+                        f"不可跳过至「{stage_key}」。"
+                        f"审批顺序: {' → '.join(self._get_ordered_stage_keys(release['release_type']))}"
+                    ),
+                }
 
         target = None
         for a in approvals:
@@ -276,7 +343,31 @@ class ApprovalFlowEngine:
         if not release:
             return {"success": False, "error": "发布单不存在"}
 
+        passed, msg = self._check_pre_check_passed(release)
+        if not passed:
+            return {"success": False, "error": msg}
+
         approvals = storage.get_approvals(release_id)
+        if not approvals:
+            return {
+                "success": False,
+                "error": f"发布单 {release_id} 尚未初始化审批流程",
+            }
+
+        channel_cfg = self._get_channel_config(release["release_type"])
+        approval_mode = channel_cfg.get("approval_mode", "serial")
+
+        if approval_mode == "serial":
+            awaiting = self._find_awaiting_stage(release, approvals)
+            if awaiting and awaiting["stage_key"] != stage_key:
+                return {
+                    "success": False,
+                    "error": (
+                        f"当前应先处理「{awaiting['stage_name']}」阶段的审批，"
+                        f"不可跳过至「{stage_key}」"
+                    ),
+                }
+
         target = None
         for a in approvals:
             if (
